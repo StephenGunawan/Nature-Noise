@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
           foregroundColor: lightColourTheme.onPrimary,
         ),
         cardTheme: const CardTheme().copyWith(
-          color: lightColourTheme.onSecondary,
+          color: lightColourTheme.onPrimary,
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
