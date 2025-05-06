@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nature_noise/screens/home_screen.dart';
+import 'package:nature_noise/screens/authentication/signup_login.dart';
 
 var lightColourTheme = 
   ColorScheme(
@@ -40,10 +40,16 @@ class MyApp extends StatelessWidget {
         ),
         cardTheme: const CardTheme().copyWith(
           color: lightColourTheme.onSecondary,
-        )
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: lightColourTheme.onPrimary, 
+            foregroundColor: lightColourTheme.onSurface,           
+          ),
+        ),
       ),
       debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
+      home: SignupLogin()//HomeScreen(),
     );
   }
 }
