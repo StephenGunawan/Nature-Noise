@@ -5,13 +5,18 @@ class InputCard extends StatelessWidget {
   final double height;
   final double boxRadius;
   final String initialText;
+  final bool isSecure;
+  final TextEditingController textEditingController;
 
   const InputCard({
     super.key,
     this.width = 285.0,
     this.height = 58.0,
     this.boxRadius = 10.0,
-    this.initialText = "Enter Hint Text"
+    required this.initialText,
+    required this.isSecure,
+    required this.textEditingController
+    
     });
 
   @override
@@ -26,6 +31,8 @@ class InputCard extends StatelessWidget {
         ),
         color: Theme.of(context).colorScheme.secondary,
         child: TextField(
+          controller: textEditingController,
+          obscureText: isSecure,
           decoration: InputDecoration(
             border: InputBorder.none,
             hintText: initialText,

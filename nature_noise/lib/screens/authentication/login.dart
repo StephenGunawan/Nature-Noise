@@ -1,113 +1,98 @@
 import 'package:flutter/material.dart';
+import 'package:nature_noise/components/my_input.dart';
+import 'package:nature_noise/components/my_login_button.dart';
+import 'package:nature_noise/custom_widgets/custom_button.dart';
 import 'package:nature_noise/custom_widgets/input_card.dart';
 import 'package:nature_noise/screens/authentication/sign_up.dart';
+import 'package:nature_noise/screens/home_screen.dart';
 
-class Login extends StatelessWidget {
-  const Login({super.key});
+class Login extends StatefulWidget {
+   Login({super.key});
 
+  @override
+  State<Login> createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController =TextEditingController();
+
+  // Prevent from memory
+  // @override
+  // void dispose() {
+  //   emailController.dispose();
+  //   passwrodController.dispose();
+  //   super.dispose();
+  // }
+  // BUILD UI
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack( 
-        children: [
-          const Positioned(
-          top: 135,
-          right: 120,
-          child: 
+      body: SafeArea(
+        child: Column( 
+          children: [
+            SizedBox(height: 70),
             Text("Nature Noise",
               style: TextStyle(
                 fontSize: 27,
                 fontFamily: 'Knewave'
               ),
             ),
-          ),
-          const Positioned(
-            top: 250,
-            right: 39,
-            child: SizedBox(
-              height:235,
-              width: 329,
-              child: Card(
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(15)),
-                ),
-                child: Stack(
-                  children: [
-                    Positioned(
-                      top: 15,
-                      right: 125,
-                      child: Text("LOGIN",
-                        style: TextStyle(
+            SizedBox(height: 50),
+            Center(
+              child: Container(
+                width: 329,
+                height: 230,
+                child: Card(
+                  elevation: 5,
+                  child: Column(
+                    children: [
+                      SizedBox(height: 10),
+                      Text("LOGIN",
+                      style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                    Positioned(
-                      top: 65,
-                      right: 20,
-                      child: InputCard(
-                        initialText: "Email"
-                      ),
-                    ),
-                    Positioned(
-                      top: 130,
-                      right: 20,
-                      child: InputCard(
-                        initialText: "Password"
-                      ),
-                    ),
-                  ],
+                      SizedBox(height: 10),
+                      InputCard(
+                        initialText: "Email",
+                        textEditingController: emailController, 
+                        isSecure: false),
+                      SizedBox(height: 5),
+                      InputCard(
+                        initialText: "Password",
+                        textEditingController: passwordController, 
+                        isSecure: true),
+                    ]
+                  ),
                 ),
               ),
             ),
-          ),
-          //Login Button
-          Positioned(
-            top: 550,
-            right: 130,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                elevation: 5,
-                minimumSize: Size(150,45),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-              ),
+            SizedBox(height: 20),
+            //Login Button
+            CustomButton(
+              width: 150, 
+              height: 45, 
+              text: "LOGIN", 
               onPressed: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>Login()));
-              }, 
-              child: const Text("LOGIN",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeScreen()
+                ));
+              }
             ),
-          ),
-          //Sign up button
-          Positioned(
-            top: 610,
-            right: 130,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                elevation: 5,
-                minimumSize: Size(150,45),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-              ),
+            SizedBox(height: 10,),
+            //Sign up button
+            CustomButton(
+              width: 150, 
+              height: 45, 
+              text: "SIGN UP", 
               onPressed: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>SignUp()));
-              }, 
-              child: const Text("SIGN UP",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>SignUp()
+                ));
+              }
             ),
-          ),
-        ]
+          ],     
+        ),
       ),
     );
   }
