@@ -1,5 +1,11 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:nature_noise/firebase_options.dart';
 import 'package:nature_noise/screens/authentication/signup_login.dart';
+import 'package:nature_noise/screens/home_screen.dart';
+import 'package:nature_noise/state_management/authentication_state.dart';
+import 'package:provider/provider.dart';
+
 
 var lightColourTheme = 
   ColorScheme(
@@ -15,8 +21,13 @@ var lightColourTheme =
     onSurface: const Color.fromARGB(255, 0, 0, 0)
     );
 
-void main() {
-  runApp(const MyApp());
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (context) => AuthenticationState())
+  ],
+  child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -36,7 +47,7 @@ class MyApp extends StatelessWidget {
         ),
         appBarTheme: const AppBarTheme().copyWith(
           backgroundColor: lightColourTheme.primary,
-          foregroundColor: lightColourTheme.onPrimary,
+          foregroundColor: lightColourTheme.onSurface,
         ),
         cardTheme: const CardTheme().copyWith(
           color: lightColourTheme.onPrimary,
@@ -49,7 +60,18 @@ class MyApp extends StatelessWidget {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      home: SignupLogin()//HomeScreen(),
+      home: Consumer<AuthenticationState>(
+        builder: (
+          BuildContext context,
+          AuthenticationState value,
+          Widget? child) {  
+            if (value.isSignedin){
+              return HomeScreen();
+            }else{
+              return SignupLogin();
+            }
+          },
+        )
     );
   }
 }

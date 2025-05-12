@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:nature_noise/components/my_input.dart';
-import 'package:nature_noise/components/my_login_button.dart';
 import 'package:nature_noise/custom_widgets/custom_button.dart';
 import 'package:nature_noise/custom_widgets/input_card.dart';
 import 'package:nature_noise/screens/authentication/sign_up.dart';
 import 'package:nature_noise/screens/home_screen.dart';
+import 'package:nature_noise/state_management/authentication_state.dart';
+import 'package:provider/provider.dart';
 
 class Login extends StatefulWidget {
-   Login({super.key});
+   const Login({super.key});
 
   @override
   State<Login> createState() => _LoginState();
@@ -16,6 +16,15 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController =TextEditingController();
+
+  void login() async{
+    await Provider.of<AuthenticationState>(context, listen: false).login(
+      email: emailController.text, 
+      password: passwordController.text);
+    if (Provider.of<AuthenticationState>(context, listen: false).error == null){
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
+    }
+  }
 
   // Prevent from memory
   // @override
@@ -40,7 +49,7 @@ class _LoginState extends State<Login> {
             ),
             SizedBox(height: 50),
             Center(
-              child: Container(
+              child: SizedBox(
                 width: 329,
                 height: 230,
                 child: Card(
@@ -64,6 +73,23 @@ class _LoginState extends State<Login> {
                         initialText: "Password",
                         textEditingController: passwordController, 
                         isSecure: true),
+                      if(Provider.of<AuthenticationState>(context, listen: false).error!= null)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20.0),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.close,
+                                color: Colors.red,
+                              ),
+                              Text(Provider.of<AuthenticationState>(context, listen: false).error!, 
+                              style: TextStyle(
+                                color: Colors.red,
+                              ),
+                            )
+                          ]
+                        ),
+                      ),
                     ]
                   ),
                 ),
@@ -76,8 +102,7 @@ class _LoginState extends State<Login> {
               height: 45, 
               text: "LOGIN", 
               onPressed: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeScreen()
-                ));
+                login();
               }
             ),
             SizedBox(height: 10,),

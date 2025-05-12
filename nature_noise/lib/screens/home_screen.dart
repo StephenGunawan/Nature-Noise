@@ -18,7 +18,6 @@ class _HomeScreenState extends State<HomeScreen> {
         // Title
         title: Text("Nature noise",
           style: TextStyle(
-            color: Colors.black,
             fontFamily: 'Knewave',
             fontSize: 27,
           ),
@@ -31,7 +30,6 @@ class _HomeScreenState extends State<HomeScreen> {
               builder: (context)=>ProfileScreen())), 
             icon: Icon(
               Icons.account_circle,
-              color: Colors.black,
               size: 50,
               )
             )

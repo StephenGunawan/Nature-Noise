@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:nature_noise/custom_widgets/custom_button.dart';
 import 'package:nature_noise/custom_widgets/input_card.dart';
 import 'package:nature_noise/screens/authentication/login.dart';
+import 'package:nature_noise/state_management/authentication_state.dart';
+import 'package:provider/provider.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -11,12 +13,28 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  final TextEditingController firstnameController = TextEditingController();
-  final TextEditingController lastnameController =TextEditingController();
-  final TextEditingController usernameController =TextEditingController();
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController =TextEditingController();
+  final TextEditingController userNameController =TextEditingController();
   final TextEditingController emailController =TextEditingController();
-  final TextEditingController passwrodController =TextEditingController();
+  final TextEditingController passwordController =TextEditingController();
   final TextEditingController confirmPasswordController =TextEditingController();
+
+  void signUp() async{
+      await Provider.of<AuthenticationState>(context, listen: false).signUp(
+        firstName: firstNameController.text, 
+        lastName: lastNameController.text, 
+        userName: userNameController.text, 
+        email: emailController.text, 
+        password: passwordController.text, 
+        confirmPassword: confirmPasswordController.text);
+      
+      if (Provider.of<AuthenticationState>(context, listen: false).error == null){
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>Login()));
+      }
+    }
+
+
   // BUILD UI
   @override
   Widget build(BuildContext context) {
@@ -33,7 +51,7 @@ class _SignUpState extends State<SignUp> {
             ),
             SizedBox(height: 45),
             Center(
-              child: Container(
+              child: SizedBox(
                 height:455,
                 width: 329,
                 child: Card(
@@ -53,19 +71,19 @@ class _SignUpState extends State<SignUp> {
                       SizedBox(height: 10),
                       InputCard(
                         initialText: "First name", 
-                        textEditingController: firstnameController,
+                        textEditingController: firstNameController,
                         isSecure: false,
                       ),
                       SizedBox(height: 5),
                       InputCard(
                         initialText: "Last name",
-                        textEditingController: lastnameController,
+                        textEditingController: lastNameController,
                         isSecure: false,
                       ),
                       SizedBox(height: 5),
                       InputCard(
                         initialText: "User name",
-                        textEditingController: usernameController,
+                        textEditingController: userNameController,
                         isSecure: false,
                       ),
                       SizedBox(height: 5),
@@ -77,7 +95,7 @@ class _SignUpState extends State<SignUp> {
                       SizedBox(height: 5),
                       InputCard(
                         initialText: "Password",
-                        textEditingController: passwrodController,
+                        textEditingController: passwordController,
                         isSecure: false,
                       ),
                       SizedBox(height: 5),
@@ -85,6 +103,23 @@ class _SignUpState extends State<SignUp> {
                         initialText: "Confirm password",
                         textEditingController: confirmPasswordController,
                         isSecure: false,
+                      ),
+                      if(Provider.of<AuthenticationState>(context, listen: false).error!= null)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20.0),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.close,
+                                color: Colors.red,
+                              ),
+                              Text(Provider.of<AuthenticationState>(context, listen: false).error!, 
+                              style: TextStyle(
+                                color: Colors.red,
+                              ),
+                            )
+                          ]
+                        ),
                       ),
                     ],
                   ),
@@ -98,8 +133,9 @@ class _SignUpState extends State<SignUp> {
               height: 45, 
               text: "SIGN UP", 
               onPressed: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>SignUp()
-                ));
+                //Navigator.push(context, MaterialPageRoute(builder: (context)=>SignUp()
+                //));
+                signUp();
               }
             ),
             SizedBox(height: 10,),
