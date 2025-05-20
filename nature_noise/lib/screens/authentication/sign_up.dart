@@ -28,11 +28,25 @@ class _SignUpState extends State<SignUp> {
         email: emailController.text, 
         password: passwordController.text, 
         confirmPassword: confirmPasswordController.text);
-      
+      if(!mounted){
+        return;
+      }
       if (Provider.of<AuthenticationState>(context, listen: false).error == null){
         Navigator.push(context, MaterialPageRoute(builder: (context)=>Login()));
       }
     }
+  
+  // Prevent from memory leakage
+  @override
+  void dispose() {
+    firstNameController.dispose();
+    lastNameController.dispose();
+    userNameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
+  }
 
 
   // BUILD UI
@@ -133,8 +147,6 @@ class _SignUpState extends State<SignUp> {
               height: 45, 
               text: "SIGN UP", 
               onPressed: (){
-                //Navigator.push(context, MaterialPageRoute(builder: (context)=>SignUp()
-                //));
                 signUp();
               }
             ),

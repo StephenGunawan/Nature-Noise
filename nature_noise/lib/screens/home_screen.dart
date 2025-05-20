@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nature_noise/screens/profile_screen.dart';
+import 'package:nature_noise/screens/sound_record_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -9,6 +10,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  int curIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,6 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
         //back button
         automaticallyImplyLeading: false,
         // Title
+        centerTitle: true,
         title: Text("Nature noise",
           style: TextStyle(
             fontFamily: 'Knewave',
@@ -37,6 +41,16 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       // Bottom Navigation
       bottomNavigationBar: BottomNavigationBar(
+        onTap: (index){
+          if (index == 2){
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>SoundRecord()));
+          }else{
+            setState(() {
+              curIndex = index;
+            });
+          }
+        },
+        currentIndex: curIndex,
         type: BottomNavigationBarType.fixed,
         items: const[
           BottomNavigationBarItem(
@@ -50,6 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.mic, size: 50),
             label: ''
+            
             ),
           BottomNavigationBarItem(
             icon: Icon(Icons.book, size: 50),

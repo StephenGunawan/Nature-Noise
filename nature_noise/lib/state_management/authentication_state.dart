@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:nature_noise/models/user_model.dart';
 
 
 class AuthenticationState extends ChangeNotifier {
@@ -55,12 +56,14 @@ class AuthenticationState extends ChangeNotifier {
           error = null;
 
           if (authentication.user != null){
-            await FirebaseFirestore.instance.collection('users').doc(authentication.user!.uid).set({
-              'First Name': firstName,
-              'Last Name': lastName,
-              'Username': userName,
-              'Email': email,
-            });
+            UserData data = UserData(
+              firstName: firstName,
+              lastName: lastName,
+              userName: userName,
+              email: email,
+              uid: authentication.user!.uid
+            );
+            await FirebaseFirestore.instance.collection('users').doc(data.uid).set(data.toJson());
           }
           notifyListeners();
         } on FirebaseAuthException catch(e){

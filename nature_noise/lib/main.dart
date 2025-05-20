@@ -4,6 +4,7 @@ import 'package:nature_noise/firebase_options.dart';
 import 'package:nature_noise/screens/authentication/signup_login.dart';
 import 'package:nature_noise/screens/home_screen.dart';
 import 'package:nature_noise/state_management/authentication_state.dart';
+import 'package:nature_noise/state_management/sound_recording_state.dart';
 import 'package:provider/provider.dart';
 
 
@@ -25,7 +26,8 @@ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(MultiProvider(providers: [
-    ChangeNotifierProvider(create: (context) => AuthenticationState())
+    ChangeNotifierProvider(create: (context) => AuthenticationState()),
+    ChangeNotifierProvider(create: (context) => SoundRecordingState()),
   ],
   child: MyApp()));
 }
