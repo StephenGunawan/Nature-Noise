@@ -23,6 +23,7 @@ class SoundRecordingState extends ChangeNotifier{
   Duration get recordDuration => recordingDuration;
   bool get isRecording => sound.isRecording;
   bool get isUploadLoading => _currentlyUploading;
+  String? get audioBlobURL => _audioBlobURL;
 
 
   @override
@@ -55,8 +56,6 @@ class SoundRecordingState extends ChangeNotifier{
   void stopTime (){
     _time?.cancel();
   }
-
-
 
   Future<void> micPermission() async {
     if(!kIsWeb){
@@ -92,11 +91,12 @@ class SoundRecordingState extends ChangeNotifier{
     notifyListeners();
   } 
 
-  Future<void>stopRecord() async{
+  Future<String?>stopRecord() async{
     if(!isReadyRecord){
-      return;
+      return null;
     }
     setUpload(true);
+    String? urlDownload;
     if(kIsWeb){
       stopTime();
       await sound.stopRecorder();
@@ -107,16 +107,17 @@ class SoundRecordingState extends ChangeNotifier{
         bytes.setRange(offset, offset + chunk.length, chunk);
         offset += chunk.length;
       }
-      final urlDownload = await uploadToRemote(bytes);
+      urlDownload = await uploadToRemote(bytes);
       _audioBlobURL = urlDownload;
     }else{
       await sound.stopRecorder();
       final bytes = await File(recordingPath!).readAsBytes();
-      final urlDownload = await uploadToRemote(bytes);
+      urlDownload = await uploadToRemote(bytes);
       _audioBlobURL = urlDownload;
     }
     setUpload(false);
     notifyListeners();
+    return urlDownload;
   }
 
   Future<String>uploadToRemote(Uint8List bytesAudio) async {

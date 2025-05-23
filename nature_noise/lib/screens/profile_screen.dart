@@ -21,7 +21,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if(!mounted){
       return;
     }
-    if (Provider.of<AuthenticationState>(context, listen: false).error == null){
+    if (Provider.of<AuthenticationState>(context, listen: false).signOutError == null){
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>SignupLogin()));
     }
   }
@@ -56,7 +56,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           if(snapshot.connectionState == ConnectionState.waiting){
             return Center(
               child: CircularProgressIndicator(
-                color: Colors.brown,
+                color: Colors.black,
               ),
             );
           }
@@ -105,7 +105,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   text: "SIGN OUT", 
                   onPressed: signOut
                 ),
-                if(Provider.of<AuthenticationState>(context, listen: false).error!= null)
+                if(Provider.of<AuthenticationState>(context, listen: false).signOutError!= null)
                   Padding(
                     padding: const EdgeInsets.only(left: 20.0),
                       child: Row(
@@ -114,7 +114,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             Icons.close,
                               color: Colors.red,
                               ),
-                          Text(Provider.of<AuthenticationState>(context, listen: false).error!, 
+                          Text(Provider.of<AuthenticationState>(context, listen: false).signOutError!, 
                             style: TextStyle(
                               color: Colors.red,
                         ),

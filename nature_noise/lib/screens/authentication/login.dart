@@ -24,7 +24,7 @@ class _LoginState extends State<Login> {
     if(!mounted){
       return;
     }
-    if (Provider.of<AuthenticationState>(context, listen: false).error == null){
+    if (Provider.of<AuthenticationState>(context, listen: false).loginError == null){
       Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
     }
   }
@@ -42,88 +42,107 @@ class _LoginState extends State<Login> {
     return Scaffold(
       body: SingleChildScrollView(
         child: SafeArea(
-          child: Column( 
-            children: [
-              SizedBox(height: 70),
-              Text("Nature Noise",
-                style: TextStyle(
-                  fontSize: 27,
-                  fontFamily: 'Knewave'
-                ),
-              ),
-              SizedBox(height: 50),
-              Center(
-                child: SizedBox(
-                  width: 329,
-                  height: 230,
-                  child: Card(
-                    elevation: 5,
-                    child: Column(
-                      children: [
-                        SizedBox(height: 10),
-                        Text("LOGIN",
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        InputCard(
-                          initialText: "Email",
-                          textEditingController: emailController, 
-                          isSecure: false),
-                        SizedBox(height: 5),
-                        InputCard(
-                          initialText: "Password",
-                          textEditingController: passwordController, 
-                          isSecure: true),
-                        if(Provider.of<AuthenticationState>(context, listen: false).error!= null)
-                          Padding(
-                            padding: const EdgeInsets.only(left: 20.0),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.close,
-                                  color: Colors.red,
+          child: Consumer<AuthenticationState>(
+            builder: (context, state, _){
+              if (state.waiting){
+                return Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.black
+                  ));
+              }else{
+                return Column( 
+                  children: [
+                    SizedBox(height: 70),
+                    Text("Nature Noise",
+                      style: TextStyle(
+                        fontSize: 27,
+                        fontFamily: 'Knewave'
+                      ),
+                    ),
+                    SizedBox(height: 50),
+                    Center(
+                      child: SizedBox(
+                        width: 329,
+                        height: 230,
+                        child: Card(
+                          elevation: 5,
+                          child: Column(
+                            children: [
+                              SizedBox(height: 10),
+                              Text("LOGIN",
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                Text(Provider.of<AuthenticationState>(context, listen: false).error!, 
-                                style: TextStyle(
-                                  color: Colors.red,
-                                ),
-                              )
+                              ),
+                              SizedBox(height: 10),
+                              InputCard(
+                                initialText: "Email",
+                                textEditingController: emailController, 
+                                isSecure: false),
+                              SizedBox(height: 5),
+                              InputCard(
+                                initialText: "Password",
+                                textEditingController: passwordController, 
+                                isSecure: true),
+                              Consumer<AuthenticationState>(
+                                builder: (context, state, _){
+                                    if(state.loginError!=null){
+                                      return Padding(
+                                        padding: const EdgeInsets.only(left: 20.0),
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.close,
+                                              color: Colors.red,
+                                            ),
+                                            Text(state.loginError!, 
+                                            style: TextStyle(
+                                              color: Colors.red,
+                                            ),
+                                          )
+                                        ]
+                                      ),
+                                    );
+                                  }else{
+                                    return SizedBox.shrink();
+                                  }
+                                }
+                              ),
                             ]
                           ),
                         ),
-                      ]
+                      ),
                     ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
-              //Login Button
-              CustomButton(
-                width: 150, 
-                height: 45, 
-                text: "LOGIN", 
-                onPressed: (){
-                  login();
-                }
-              ),
-              SizedBox(height: 10,),
-              //Sign up button
-              CustomButton(
-                width: 150, 
-                height: 45, 
-                text: "SIGN UP", 
-                onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>SignUp()
-                  ));
-                }
-              ),
-            ],     
+                    SizedBox(height: 20),
+                    //Login Button
+                    CustomButton(
+                      width: 150, 
+                      height: 45, 
+                      text: "LOGIN", 
+                      onPressed: (){
+                        login();
+                      }
+                    ),
+                    SizedBox(height: 10,),
+                    //Sign up button
+                    CustomButton(
+                      width: 150, 
+                      height: 45, 
+                      text: "SIGN UP", 
+                      onPressed: (){
+                        Provider.of<AuthenticationState>(context, listen: false).clearError();
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>SignUp()
+                        ));
+                      }
+                    ),
+                  ],     
+                );
+              }
+            }
           ),
         ),
-      ),
+      )
     );
   }
 }

@@ -6,7 +6,10 @@ import 'package:nature_noise/models/user_model.dart';
 
 class AuthenticationState extends ChangeNotifier {
   bool isSignedin = false;
-  String? error;
+  String? loginError;
+  String? signUpError;
+  String? signOutError;
+  bool waiting = false;
 
   // ensures that sign in status is called right away
   AuthenticationState(){
@@ -35,6 +38,9 @@ class AuthenticationState extends ChangeNotifier {
     required String password,
     required String confirmPassword
   }) async{
+    signUpError = null;
+    waiting = true;
+    notifyListeners();
       if (
         firstName.isEmpty ||
         lastName.isEmpty ||
@@ -43,17 +49,19 @@ class AuthenticationState extends ChangeNotifier {
         password.isEmpty ||
         confirmPassword.isEmpty
         ){
-        error = "missing input";
+        signUpError = "missing input";
+        waiting = false;
         notifyListeners();
       }else if(password!=confirmPassword){
-        error = "Passwords needs to match";
+        signUpError = "Passwords needs to match";
+        waiting = false;
         notifyListeners();
       }else{
         try {
           UserCredential? authentication = await FirebaseAuth.instance.createUserWithEmailAndPassword(
             email: email, 
             password: password);
-          error = null;
+          signUpError = null;
 
           if (authentication.user != null){
             UserData data = UserData(
@@ -67,7 +75,10 @@ class AuthenticationState extends ChangeNotifier {
           }
           notifyListeners();
         } on FirebaseAuthException catch(e){
-          error = e.code;
+          signUpError = e.code;
+          notifyListeners();
+        }finally{
+          waiting = false;
           notifyListeners();
         }
       }
@@ -78,24 +89,44 @@ class AuthenticationState extends ChangeNotifier {
   required String email,
   required String password,
   }) async{
+    loginError = null;
+    waiting = true;
+    notifyListeners();
     try{
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email, 
         password: password);
         notifyListeners();
     } on FirebaseAuthException catch (e){
-        error = e.code;
+        loginError = e.code;
         notifyListeners();
+    }finally{
+      waiting = false;
+      notifyListeners();
     }
   }
 
   Future <void> signOut() async {
+    waiting = true;
+    notifyListeners();
     try{
       await FirebaseAuth.instance.signOut(); 
       notifyListeners();
     }on FirebaseAuthException catch (e){
-      error = e.code;
+      signOutError = e.code;
+      notifyListeners();
+    }finally{
+      waiting = false;
       notifyListeners();
     }
   } 
+
+  void clearError(){
+  loginError = null;
+  signUpError = null;
+  signOutError = null;
+  notifyListeners();
 }
+}
+
+

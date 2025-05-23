@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:nature_noise/custom_widgets/temp_replay.dart';
 import 'package:nature_noise/screens/profile_screen.dart';
 
 class SaveRecord extends StatefulWidget {
-  const SaveRecord ({super.key});
+  final String url;
+  const SaveRecord ({super.key, required this.url});
 
   @override
   State<SaveRecord> createState() => _MyWidgetState();
@@ -25,6 +27,12 @@ class _MyWidgetState extends State<SaveRecord> {
             )
         )],
       ),
+
+      body: Column(
+        children: [
+          TempReplay(url: widget.url)
+        ],
+      )
     );
   }
 }

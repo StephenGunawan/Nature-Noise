@@ -95,9 +95,9 @@ class _SoundRecordState extends State<SoundRecord> {
                 }
                 // start and stop recording sound 
                 if(soundRecord.isRecording){
-                  await soundRecord.stopRecord();
-                  if(!mounted)return;  
-                  await Navigator.push(context, MaterialPageRoute(builder: (context)=>SaveRecord()));
+                  final url = await soundRecord.stopRecord();
+                  if(!mounted|| url == null )return;  
+                  await Navigator.push(context, MaterialPageRoute(builder: (context)=>SaveRecord(url: url)));
                   soundRecord.resetRecord();
                 }else{
                   await soundRecord.startRecord();
