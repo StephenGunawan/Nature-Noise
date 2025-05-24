@@ -1,11 +1,17 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_sound/flutter_sound.dart';
 import 'package:flutter_sound/public/flutter_sound_recorder.dart';
+import 'package:http/http.dart' as http;
+import 'package:nature_noise/models/sound_record_model.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:uuid/uuid.dart';
 
 
 class SoundRecordingState extends ChangeNotifier{
@@ -19,6 +25,7 @@ class SoundRecordingState extends ChangeNotifier{
   Timer? _time;
   Duration recordingDuration = Duration.zero;
   bool _currentlyUploading = false;
+  String? errorSaveSound;
 
   Duration get recordDuration => recordingDuration;
   bool get isRecording => sound.isRecording;
@@ -80,7 +87,10 @@ class SoundRecordingState extends ChangeNotifier{
     _audioRecord.clear();
     _audioBlobURL = null;
     if(kIsWeb){
-      await sound.startRecorder(toStream: _audioController.sink);
+      await sound.startRecorder(
+        toFile: 'recording.webm',
+        codec: Codec.opusWebM,
+        );
       startTime();
     }else{
       final directory = await getTemporaryDirectory();
@@ -99,20 +109,19 @@ class SoundRecordingState extends ChangeNotifier{
     String? urlDownload;
     if(kIsWeb){
       stopTime();
-      await sound.stopRecorder();
-      final length = _audioRecord.fold<int>(0,(sum,chunk) => sum +chunk.length);
-      final bytes = Uint8List(length);
-      int offset = 0;
-      for(var chunk in _audioRecord){
-        bytes.setRange(offset, offset + chunk.length, chunk);
-        offset += chunk.length;
+      final urlBlob = await sound.stopRecorder();
+      if(urlBlob == null){
+        setUpload(false);
+        return null;
       }
-      urlDownload = await uploadToRemote(bytes);
+      final http.Response res = await http.get(Uri.parse(urlBlob));
+      final Uint8List bytes = res.bodyBytes;
+      urlDownload = await uploadToRemote(bytes, isWeb: true);
       _audioBlobURL = urlDownload;
     }else{
       await sound.stopRecorder();
       final bytes = await File(recordingPath!).readAsBytes();
-      urlDownload = await uploadToRemote(bytes);
+      urlDownload = await uploadToRemote(bytes, isWeb: false);
       _audioBlobURL = urlDownload;
     }
     setUpload(false);
@@ -120,11 +129,13 @@ class SoundRecordingState extends ChangeNotifier{
     return urlDownload;
   }
 
-  Future<String>uploadToRemote(Uint8List bytesAudio) async {
+  Future<String>uploadToRemote(Uint8List bytesAudio,{required bool isWeb}) async {
     try{
       final storageReference = FirebaseStorage.instance.ref();
-      final file = storageReference.child('Recordings/recording_${DateTime.now().millisecondsSinceEpoch}.aac');
-      final upload = file.putData(bytesAudio, SettableMetadata(contentType: 'audio/aac'));
+      final extension = isWeb ? 'webm' : 'aac';
+      final soundType = isWeb ? 'audio/webm' : 'audio/webm';
+      final file = storageReference.child('Recordings/recording_${DateTime.now().millisecondsSinceEpoch}.$extension');
+      final upload = file.putData(bytesAudio, SettableMetadata(contentType: soundType));
 
       await upload;
       return await file.getDownloadURL();
@@ -137,7 +148,49 @@ class SoundRecordingState extends ChangeNotifier{
   void resetRecord(){
     _audioRecord.clear();
     _audioBlobURL = null;
+    errorSaveSound = null;
     recordingDuration = Duration.zero;
     notifyListeners();
+  }
+
+  Future<void>uploadMetaDataDatabase({
+    required String soundName,
+    required String prompt,
+    required String urlSound,
+    required bool isPost
+  }) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null){
+      return;
+    }
+    errorSaveSound = null;
+    notifyListeners();
+    if (soundName.isEmpty){
+      errorSaveSound = "Please input a name for the sound";
+      notifyListeners();
+      return;
+    }
+    final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+    final username = doc.data()?['username'] ?? 'unknown';
+    final recordingID = const Uuid().v4();
+
+    final rec = SoundRecord(
+      recordingID: recordingID,
+      uid: user.uid, 
+      soundName: soundName,
+      userName: username, 
+      prompt: prompt, 
+      timeCreated: DateTime.now(), 
+      recordingURL: urlSound, 
+      isPost: isPost
+      );
+
+    await FirebaseFirestore.instance
+      .collection('userNatureNoiseRecordings')
+      .doc(recordingID)
+      .set(rec.toJson());
+
+    errorSaveSound = null;
+    notifyListeners();  
   }
 }

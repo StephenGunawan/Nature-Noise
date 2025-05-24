@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:nature_noise/screens/prompt_screen.dart';
 
-class TempReplay extends StatefulWidget {
+class PostSaveReplay extends StatefulWidget {
   final String url;
-  const TempReplay({super.key, required this.url});
+  final String username;
+  final String soundname;
+  final String? prompt;
+  const PostSaveReplay({
+    super.key,
+    required this.url,
+    required this.username,
+    required this.soundname,
+    this.prompt, 
+    });
 
   @override
-  State<TempReplay> createState() => _TempReplayState();
+  State<PostSaveReplay> createState() => _PostSaveReplayState();
 }
 
-class _TempReplayState extends State<TempReplay> {
+class _PostSaveReplayState extends State<PostSaveReplay> {
   late AudioPlayer replay;
   bool repeat = false;
   Duration timeTotal = Duration.zero;
@@ -122,34 +132,66 @@ class _TempReplayState extends State<TempReplay> {
               ),
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment:  MainAxisAlignment.spaceBetween,
               children: [
-                Icon(
-                  Icons.favorite_border,
-                  size:35,
+                Padding(
+                  padding: const EdgeInsets.only(left: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('soundname: ${widget.soundname}'),
+                      SizedBox(height: 10),
+                      Text('username: ${widget.username}'),
+                    ],
                   ),
-                StreamBuilder<PlayerState>(
-                  stream: statePlay, 
-                  builder: (context, snapshot){
-                    final play = snapshot.data?.playing ??false;
-                    return IconButton(
-                      onPressed: playPause,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.favorite_border,
+                      size: 25,
+                      ),
+                    StreamBuilder<PlayerState>(
+                      stream: statePlay, 
+                      builder: (context, snapshot){
+                        final play = snapshot.data?.playing ??false;
+                        return IconButton(
+                          onPressed: playPause,
+                          icon: Icon(
+                            play? Icons.pause : Icons.play_arrow,
+                            size:40,
+                          )
+                        );
+                      }
+                      ),
+                    IconButton(
+                      onPressed: makeRepeat, 
                       icon: Icon(
-                        play? Icons.pause : Icons.play_arrow,
-                        size:50,
-                      )
-                    );
-                  }
-                  ),
-                IconButton(
-                  onPressed: makeRepeat, 
-                  icon: Icon(
-                    Icons.repeat,
-                    size: 40,
-                    color: repeat? Colors.red : Colors.black
-                    )
-                  ),
+                        Icons.repeat,
+                        size: 30,
+                        color: repeat? Colors.red : Colors.black
+                        )
+                      ),
+                  ],
+                ),
               ],
+            ),
+            Center(
+              child: Column(
+                children: [
+                  Text("read prompt"),
+                  IconButton(
+                    onPressed: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => PromptScreen(
+                        url: widget.url,
+                        soundname: widget.soundname,
+                        prompt: widget.prompt ?? '',
+                        )));
+                    }, 
+                    icon: Icon(Icons.expand_more))
+                ],
+              )
             )
           ],
         )
