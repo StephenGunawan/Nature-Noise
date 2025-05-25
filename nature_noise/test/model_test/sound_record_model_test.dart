@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:nature_noise/models/sound_record_model.dart';
 
 void main(){
+  //unit test sound record model for sound recording entity
   group("Sound record model test",(){
     final soundTest = SoundRecord(
       recordingID: "record1", 

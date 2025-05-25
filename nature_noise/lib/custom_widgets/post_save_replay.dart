@@ -29,6 +29,7 @@ class _PostSaveReplayState extends State<PostSaveReplay> {
   late Stream<Duration> listenPosition;
   late Stream<PlayerState> statePlay;
 
+  //initialise audioplayer
   @override
   void initState(){
     super.initState();
@@ -43,6 +44,7 @@ class _PostSaveReplayState extends State<PostSaveReplay> {
       }
     });
 
+    //listens for the slider button position
     replay.positionStream.listen((pos){
       if (mounted && !isSeek){
         setState(() {
@@ -56,6 +58,7 @@ class _PostSaveReplayState extends State<PostSaveReplay> {
     statePlay = replay.playerStateStream;
   }
 
+  //loop function uses just_audio library
   void makeRepeat(){
     setState(() {
       repeat = !repeat;
@@ -71,6 +74,7 @@ class _PostSaveReplayState extends State<PostSaveReplay> {
     }
   }
 
+  //format the time to structured with the minute and 1 place value and second at 10 placevalue
   String sliderTimeStructure(Duration timeAt){
     String digitOne (int n) => n.toString().padLeft(1,'0');
     String digitTwo (int n) => n.toString().padLeft(2,'0');

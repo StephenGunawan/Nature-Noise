@@ -19,6 +19,7 @@ class _TempReplayState extends State<TempReplay> {
   late Stream<Duration> listenPosition;
   late Stream<PlayerState> statePlay;
 
+  //initialise audioplayer
   @override
   void initState(){
     super.initState();
@@ -33,6 +34,7 @@ class _TempReplayState extends State<TempReplay> {
       }
     });
 
+    //listend for the slider button position
     replay.positionStream.listen((pos){
       if (mounted && !isSeek){
         setState(() {
@@ -46,6 +48,7 @@ class _TempReplayState extends State<TempReplay> {
     statePlay = replay.playerStateStream;
   }
 
+  //repeat method
   void makeRepeat(){
     setState(() {
       repeat = !repeat;
@@ -53,6 +56,7 @@ class _TempReplayState extends State<TempReplay> {
     });
   }
 
+  //pause or play recording function
   void playPause(){
     if (replay.playing){
       replay.pause();
@@ -61,6 +65,7 @@ class _TempReplayState extends State<TempReplay> {
     }
   }
 
+  //time format for slider duration 
   String sliderTimeStructure(Duration timeAt){
     String digitOne (int n) => n.toString().padLeft(1,'0');
     String digitTwo (int n) => n.toString().padLeft(2,'0');

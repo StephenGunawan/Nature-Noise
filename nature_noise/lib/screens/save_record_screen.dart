@@ -69,6 +69,7 @@ class _MyWidgetState extends State<SaveRecord> {
                 )
               ),
             ),
+            //error listener no sound name input
             Consumer<SoundRecordingState>(
               builder: (context, state, _){
                 if(state.errorSaveSound!=null){

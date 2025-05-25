@@ -3,12 +3,13 @@ import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nature_noise/state_management/authentication_state.dart';
 
+// unit test authentication state management
 void main(){
   late MockFirebaseAuth mockAuth;
   late FakeFirebaseFirestore fakeFirestore;
   late AuthenticationState authState;
 
-
+  // set up mock environment
   setUp((){
     mockAuth = MockFirebaseAuth();
     fakeFirestore = FakeFirebaseFirestore();

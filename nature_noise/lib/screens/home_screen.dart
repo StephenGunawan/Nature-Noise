@@ -42,6 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
             )
         )],
       ),
+      //query result only for public posts 
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
                 .collection("userNatureNoiseRecordings")
@@ -49,16 +50,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 .orderBy('created_time', descending: true)
                 .snapshots(), 
         builder: (context, snapshot){
+          //if error occurs
           if (snapshot.hasError){
             return Center(child: Text("Error loading posts"));
           }
+          //if loading posts 
           if (!snapshot.hasData){
             return Center(child: CircularProgressIndicator());
           }
+          //if there is no public posts
           final docs = snapshot.data!.docs;
           if(docs.isEmpty){
             return Center(child: Text("Users have not posted"));
           }
+          //all users save recordings through ListView widget and custon PostSaveReplay widget
           return Center(
             child: SizedBox(
               width: 400,

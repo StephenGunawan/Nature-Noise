@@ -68,6 +68,7 @@ class NatureNoise extends StatelessWidget {
         ),
       ),
       debugShowCheckedModeBanner: false,
+      //check if user is signed in or not
       home: Consumer<AuthenticationState>(
         builder: (
           BuildContext context,

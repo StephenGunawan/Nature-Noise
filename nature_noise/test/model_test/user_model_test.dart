@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:nature_noise/models/user_model.dart';
 
 void main(){
+  //unit test model data for user entity
   group("User data model test",(){
     final userDataTest = UserData(
       firstName: "Mark", 

@@ -25,7 +25,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>SignupLogin()));
     }
   }
-
+  //extract user data for username, firstname, lastname, and email
   Future<UserData> extractUserData() async{
     try {
       DocumentSnapshot data = await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid).get();
@@ -105,6 +105,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   text: "SIGN OUT", 
                   onPressed: signOut
                 ),
+                //if error occurs for signout
                 if(Provider.of<AuthenticationState>(context, listen: false).signOutError!= null)
                   Padding(
                     padding: const EdgeInsets.only(left: 20.0),
