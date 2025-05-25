@@ -62,122 +62,135 @@ class _SignUpState extends State<SignUp> {
                   color: Colors.black
                 ));
             }else{
-              return Column( 
-                children: [
-                  SizedBox(height: 35),
-                  Text("Nature Noise",
-                    style: TextStyle(
-                      fontSize: 27,
-                      fontFamily: 'Knewave',
+              return SingleChildScrollView(
+                child: Column( 
+                  children: [
+                    SizedBox(height: 35),
+                    Text("Nature Noise",
+                      style: TextStyle(
+                        fontSize: 27,
+                        fontFamily: 'Knewave',
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 45),
-                  Center(
-                    child: SizedBox(
-                      height:455,
-                      width: 329,
-                      child: Card(
-                        elevation: 5,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                        ),
-                        child: Column(
-                          children: [
-                            SizedBox(height: 10),
-                            Text("SIGN UP",
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
+                    SizedBox(height: 45),
+                    Center(
+                      child: SizedBox(
+                        height:455,
+                        width: 329,
+                        child: Card(
+                          elevation: 5,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                          ),
+                          child: Column(
+                            children: [
+                              SizedBox(height: 10),
+                              Text("SIGN UP",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                            SizedBox(height: 10),
-                            InputCard(
-                              initialText: "First name", 
-                              textEditingController: firstNameController,
-                              isSecure: false,
-                            ),
-                            SizedBox(height: 5),
-                            InputCard(
-                              initialText: "Last name",
-                              textEditingController: lastNameController,
-                              isSecure: false,
-                            ),
-                            SizedBox(height: 5),
-                            InputCard(
-                              initialText: "User name",
-                              textEditingController: userNameController,
-                              isSecure: false,
-                            ),
-                            SizedBox(height: 5),
-                            InputCard(
-                              initialText: "Email",
-                              textEditingController: emailController,
-                              isSecure: false,
-                            ),
-                            SizedBox(height: 5),
-                            InputCard(
-                              initialText: "Password",
-                              textEditingController: passwordController,
-                              isSecure: false,
-                            ),
-                            SizedBox(height: 5),
-                            InputCard(
-                              initialText: "Confirm password",
-                              textEditingController: confirmPasswordController,
-                              isSecure: false,
-                            ),
-                            Consumer<AuthenticationState>(
-                              builder: (context, state, _){
-                                  if (state.signUpError != null){
-                                    return Padding(
-                                      padding: const EdgeInsets.only(left: 20.0),
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.close,
-                                            color: Colors.red,
-                                          ),
-                                          Text(state.signUpError!, 
-                                          style: TextStyle(
-                                            color: Colors.red,
-                                          ),
-                                        )
-                                      ]
-                                    ),
-                                  );
-                                }else{
-                                  return SizedBox.shrink();
+                              SizedBox(height: 10),
+                              InputCard(
+                                textFieldkey: Key("firstNameInput"),
+                                initialText: "First name", 
+                                textEditingController: firstNameController,
+                                isSecure: false,
+                              ),
+                              SizedBox(height: 5),
+                              InputCard(
+                                textFieldkey: Key("lastNameInput"),
+                                initialText: "Last name",
+                                textEditingController: lastNameController,
+                                isSecure: false,
+                              ),
+                              SizedBox(height: 5),
+                              InputCard(
+                                textFieldkey: Key("userNameInput"),
+                                initialText: "Username",
+                                textEditingController: userNameController,
+                                isSecure: false,
+                              ),
+                              SizedBox(height: 5),
+                              InputCard(
+                                textFieldkey: Key("emailInput"),
+                                initialText: "Email",
+                                textEditingController: emailController,
+                                isSecure: false,
+                              ),
+                              SizedBox(height: 5),
+                              InputCard(
+                                textFieldkey: Key("passwordInput"),
+                                initialText: "Password",
+                                textEditingController: passwordController,
+                                isSecure: false,
+                              ),
+                              SizedBox(height: 5),
+                              InputCard(
+                                textFieldkey: Key("confirmPasswordInput"),
+                                initialText: "Confirm password",
+                                textEditingController: confirmPasswordController,
+                                isSecure: false,
+                              ),
+                              Consumer<AuthenticationState>(
+                                builder: (context, state, _){
+                                    if (state.signUpError != null){
+                                      return Padding(
+                                        padding: const EdgeInsets.only(left: 20.0),
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.close,
+                                              color: Colors.red,
+                                            ),
+                                            Expanded(
+                                              child: Text(state.signUpError!, 
+                                              style: TextStyle(
+                                                color: Colors.red,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            ),
+                                        ],
+                                      ),
+                                    );
+                                  }else{
+                                    return SizedBox.shrink();
+                                  }
                                 }
-                              }
-                            )
-                          ],
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 20),
-                  //Sign up Button
-                  CustomButton(
-                    width: 150, 
-                    height: 45, 
-                    text: "SIGN UP", 
-                    onPressed: (){
-                      signUp();
-                    }
-                  ),
-                  SizedBox(height: 10,),
-                  //Login button
-                  CustomButton(
-                    width: 150, 
-                    height: 45, 
-                    text: "LOGIN", 
-                    onPressed: (){
-                      Provider.of<AuthenticationState>(context, listen: false).clearError();
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>Login()
-                      ));
-                    }
-                  ),
-                ]
+                    SizedBox(height: 20),
+                    //Sign up Button
+                    CustomButton(
+                      key: Key("signUpButton"),
+                      width: 150, 
+                      height: 45, 
+                      text: "SIGN UP", 
+                      onPressed: (){
+                        signUp();
+                      }
+                    ),
+                    SizedBox(height: 10,),
+                    //Login button
+                    CustomButton(
+                      key:Key("loginButton"),
+                      width: 150, 
+                      height: 45, 
+                      text: "LOGIN", 
+                      onPressed: (){
+                        Provider.of<AuthenticationState>(context, listen: false).clearError();
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>Login()
+                        ));
+                      }
+                    ),
+                  ]
+                ),
               );
             }
           }

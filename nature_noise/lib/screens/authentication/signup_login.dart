@@ -23,6 +23,7 @@ class SignupLogin extends StatelessWidget {
               //Login Button
               SizedBox(height: 130,),
               CustomButton(
+                key: Key('loginButton'),
                 width: 150, 
                 height: 45, 
                 text: "LOGIN", 
@@ -34,6 +35,7 @@ class SignupLogin extends StatelessWidget {
               //Sign up button
               SizedBox(height: 10,),
               CustomButton(
+                key: Key('signUpButton'),
                 width: 150, 
                 height: 45, 
                 text: "SIGN UP", 

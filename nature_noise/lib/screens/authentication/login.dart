@@ -77,11 +77,13 @@ class _LoginState extends State<Login> {
                               ),
                               SizedBox(height: 10),
                               InputCard(
+                                textFieldkey: Key("emailInput"),
                                 initialText: "Email",
                                 textEditingController: emailController, 
                                 isSecure: false),
                               SizedBox(height: 5),
                               InputCard(
+                                textFieldkey: Key("passwordInput"),
                                 initialText: "Password",
                                 textEditingController: passwordController, 
                                 isSecure: true),

@@ -7,9 +7,11 @@ class InputCard extends StatelessWidget {
   final String initialText;
   final bool isSecure;
   final TextEditingController textEditingController;
+  final Key? textFieldkey;
 
   const InputCard({
     super.key,
+    this.textFieldkey,
     this.width = 285.0,
     this.height = 58.0,
     this.boxRadius = 10.0,
@@ -31,6 +33,7 @@ class InputCard extends StatelessWidget {
         ),
         color: Theme.of(context).colorScheme.secondary,
         child: TextField(
+          key: textFieldkey ?? key,
           controller: textEditingController,
           obscureText: isSecure,
           decoration: InputDecoration(

@@ -5,6 +5,9 @@ import 'package:nature_noise/models/user_model.dart';
 
 
 class AuthenticationState extends ChangeNotifier {
+  final FirebaseAuth authentication;
+  final FirebaseFirestore firestore;
+
   bool isSignedin = false;
   String? loginError;
   String? signUpError;
@@ -12,13 +15,17 @@ class AuthenticationState extends ChangeNotifier {
   bool waiting = false;
 
   // ensures that sign in status is called right away
-  AuthenticationState(){
+  AuthenticationState({
+    FirebaseAuth? firebaseAuth,
+    FirebaseFirestore? firebaseFirestore,
+  }) : authentication = firebaseAuth ?? FirebaseAuth.instance,
+        firestore = firebaseFirestore ?? FirebaseFirestore.instance{
     signInStatus();
   }
 
   //Update usersigned in status do user don't have to log back in
   void signInStatus(){
-    FirebaseAuth.instance.authStateChanges().listen((User? user){
+    authentication.authStateChanges().listen((User? user){
       if (user == null){
         isSignedin  = false;
         notifyListeners();
@@ -58,20 +65,20 @@ class AuthenticationState extends ChangeNotifier {
         notifyListeners();
       }else{
         try {
-          UserCredential? authentication = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          UserCredential? auth = await authentication.createUserWithEmailAndPassword(
             email: email, 
             password: password);
           signUpError = null;
 
-          if (authentication.user != null){
+          if (auth.user != null){
             UserData data = UserData(
               firstName: firstName,
               lastName: lastName,
               userName: userName,
               email: email,
-              uid: authentication.user!.uid
+              uid: auth.user!.uid
             );
-            await FirebaseFirestore.instance.collection('users').doc(data.uid).set(data.toJson());
+            await firestore.collection('users').doc(data.uid).set(data.toJson());
           }
           notifyListeners();
         } on FirebaseAuthException catch(e){
@@ -93,7 +100,7 @@ class AuthenticationState extends ChangeNotifier {
     waiting = true;
     notifyListeners();
     try{
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      await authentication.signInWithEmailAndPassword(
         email: email, 
         password: password);
         notifyListeners();
@@ -110,7 +117,7 @@ class AuthenticationState extends ChangeNotifier {
     waiting = true;
     notifyListeners();
     try{
-      await FirebaseAuth.instance.signOut(); 
+      await authentication.signOut(); 
       notifyListeners();
     }on FirebaseAuthException catch (e){
       signOutError = e.code;

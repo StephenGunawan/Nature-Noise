@@ -6,7 +6,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_sound/flutter_sound.dart';
-import 'package:flutter_sound/public/flutter_sound_recorder.dart';
 import 'package:http/http.dart' as http;
 import 'package:nature_noise/models/sound_record_model.dart';
 import 'package:path_provider/path_provider.dart';
@@ -32,7 +31,6 @@ class SoundRecordingState extends ChangeNotifier{
   bool get isUploadLoading => _currentlyUploading;
   String? get audioBlobURL => _audioBlobURL;
 
-
   @override
   void dispose(){
     _audioController.close();
@@ -46,11 +44,13 @@ class SoundRecordingState extends ChangeNotifier{
     });
   }
 
+  // if uploading a circular porgress indicator will appear
   void setUpload(bool isUploading){
     _currentlyUploading = isUploading;
     notifyListeners();
   }
 
+  // start recording timer for web users 
   void  startTime (){
     _time?.cancel();
     recordingDuration = Duration.zero;
@@ -60,10 +60,12 @@ class SoundRecordingState extends ChangeNotifier{
     });
   }
 
+  //stop recording timer for web users
   void stopTime (){
     _time?.cancel();
   }
 
+  //initialises micpermission for users to be able to record sound
   Future<void> micPermission() async {
     if(!kIsWeb){
       final isGranted = await Permission.microphone.request();
@@ -80,12 +82,14 @@ class SoundRecordingState extends ChangeNotifier{
     notifyListeners();
   }
 
+  //start sound recording function 
   Future<void>startRecord() async{
     if(!isReadyRecord){
       return;
     }
     _audioRecord.clear();
     _audioBlobURL = null;
+    //if users is using the web
     if(kIsWeb){
       await sound.startRecorder(
         toFile: 'recording.webm',
@@ -93,6 +97,7 @@ class SoundRecordingState extends ChangeNotifier{
         );
       startTime();
     }else{
+      //if users is using mobile
       final directory = await getTemporaryDirectory();
       final audioPath = '${directory.path}/nature_sound_${DateTime.now().microsecondsSinceEpoch}.aac';
       await sound.startRecorder(toFile: audioPath);
@@ -101,12 +106,14 @@ class SoundRecordingState extends ChangeNotifier{
     notifyListeners();
   } 
 
+  //stops recording function
   Future<String?>stopRecord() async{
     if(!isReadyRecord){
       return null;
     }
     setUpload(true);
     String? urlDownload;
+    //if users is using the web
     if(kIsWeb){
       stopTime();
       final urlBlob = await sound.stopRecorder();
@@ -114,11 +121,13 @@ class SoundRecordingState extends ChangeNotifier{
         setUpload(false);
         return null;
       }
+      //sends http get request and extract audio file then upload to firebase storage
       final http.Response res = await http.get(Uri.parse(urlBlob));
       final Uint8List bytes = res.bodyBytes;
       urlDownload = await uploadToRemote(bytes, isWeb: true);
       _audioBlobURL = urlDownload;
     }else{
+      //if users is using mobile
       await sound.stopRecorder();
       final bytes = await File(recordingPath!).readAsBytes();
       urlDownload = await uploadToRemote(bytes, isWeb: false);
@@ -129,6 +138,7 @@ class SoundRecordingState extends ChangeNotifier{
     return urlDownload;
   }
 
+  //upload sound to firebase storage
   Future<String>uploadToRemote(Uint8List bytesAudio,{required bool isWeb}) async {
     try{
       final storageReference = FirebaseStorage.instance.ref();
@@ -145,6 +155,7 @@ class SoundRecordingState extends ChangeNotifier{
     }
   }
 
+  //resest all audio variables for next recording 
   void resetRecord(){
     _audioRecord.clear();
     _audioBlobURL = null;
@@ -153,6 +164,7 @@ class SoundRecordingState extends ChangeNotifier{
     notifyListeners();
   }
 
+  //upload to firebase firestore database with metadata
   Future<void>uploadMetaDataDatabase({
     required String soundName,
     required String prompt,
