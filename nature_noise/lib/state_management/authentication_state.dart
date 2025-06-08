@@ -113,6 +113,7 @@ class AuthenticationState extends ChangeNotifier {
     }
   }
 
+  // user signout method 
   Future <void> signOut() async {
     waiting = true;
     notifyListeners();
@@ -128,6 +129,7 @@ class AuthenticationState extends ChangeNotifier {
     }
   } 
 
+  //clear all error if there is no error
   void clearError(){
   loginError = null;
   signUpError = null;
