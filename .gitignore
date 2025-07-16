@@ -1,0 +1,4 @@
+nature_noise/android/app/google-services.json
+nature_noise/ios/Runner/GoogleService-Info.plist
+nature_noise/lib/firebase_options.dart
+nature_noise/firebase.json
